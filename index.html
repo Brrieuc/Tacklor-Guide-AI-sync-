@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tacklor Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Russo+One&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'fishing-green': '#1B4D3E', // Vert Sapin
+              'fishing-blue': '#005F6B',  // Bleu Pétrole
+              'fishing-slate': '#2F4F4F', // Gris Ardoise
+              'paper': '#F0EAD6',         // Papier vieilli
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Merriweather', 'serif'],
+              sport: ['"Russo One"', 'sans-serif'],
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              'fade-in-down': 'fadeInDown 0.5s ease-out forwards',
+              'wave': 'wave 0.6s ease-in-out infinite',
+              'tuna-pass': 'swim 1.2s linear forwards',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' }
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              fadeInDown: {
+                '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              wave: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-8px)' }
+              },
+              swim: {
+                '0%': { transform: 'translateX(-100px) scaleX(-1)', opacity: '0' },
+                '10%': { opacity: '1' },
+                '90%': { opacity: '1' },
+                '100%': { transform: 'translateX(100vw) scaleX(-1)', opacity: '0' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for the log */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      /* Ensure text readability on dynamic backgrounds */
+      .text-shadow-sm {
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "d3-geo": "https://esm.sh/d3-geo@3.1.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-black text-white antialiased selection:bg-emerald-500 selection:text-white overflow-x-hidden">
+    <div id="root"></div>
+  </body>
+</html>
