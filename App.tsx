@@ -311,7 +311,7 @@ const App: React.FC = () => {
   }, [conditions, canActivateExpert]);
 
   return (
-    <div className="relative min-h-screen pb-6 overflow-hidden">
+    <div className="relative min-h-screen pb-6">
       
       <DynamicBackground 
         time={conditions.time} 
