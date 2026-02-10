@@ -15,9 +15,15 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({ time, weather, month, onO
 
   useEffect(() => {
     const handleScroll = () => {
-      // Logic: As soon as the user scrolls (> 0), force compact mode.
-      // It only goes back to large if strict top (0) is reached.
-      setIsCompact(window.scrollY > 0);
+      const scrollY = window.scrollY;
+      // Hysteresis logic to prevent jitter:
+      // Only switch to compact if scrolled down significantly (> 60px)
+      // Only return to full header if almost at the top (< 10px)
+      setIsCompact(prev => {
+        if (scrollY > 60) return true;
+        if (scrollY < 10) return false;
+        return prev;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -55,71 +61,83 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({ time, weather, month, onO
   const iconSize = isCompact ? "text-base" : "text-xl";
 
   return (
-    <header 
-      className="sticky top-0 z-50 group border-b border-gray-800 transition-all duration-300 ease-in-out shadow-lg"
-      onMouseEnter={handleHeaderHover}
-    >
-      <div className="absolute inset-0 bg-gray-900/95 shadow-lg"></div>
-      
-      {/* Fast Passing Tuna Animation */}
-      <div className="absolute top-1/2 left-0 w-full pointer-events-none z-0 overflow-hidden h-full">
-         <div 
-           className={`text-6xl absolute -left-20 transition-opacity duration-300 ${isTunaAnimating ? 'animate-tuna-pass opacity-100' : 'opacity-0'}`} 
-           style={{ top: '50%', transform: 'translateY(-50%)' }}
-           onAnimationEnd={handleTunaAnimationEnd}
-         >
-           🐟
-         </div>
-      </div>
+    <>
+      {/* 
+        SPACER DIV: 
+        Occupies the physical space of the expanded header in the document flow.
+        Prevents content from jumping up when the header becomes 'fixed' or changes size.
+        Height matches Expanded State:
+        Mobile: py-6 (1.5rem*2) + h-16 (4rem) + border approx = 7rem = h-28
+        Desktop: py-8 (2rem*2) + h-20 (5rem) + border approx = 9rem = h-36
+      */}
+      <div className="w-full h-28 md:h-36 pointer-events-none bg-transparent" aria-hidden="true" />
 
-      <div className={`relative max-w-4xl mx-auto px-4 flex items-center justify-between z-10 transition-all duration-300 ease-in-out ${containerPadding}`}>
+      <header 
+        className="fixed top-0 left-0 w-full z-50 group border-b border-gray-800 transition-all duration-300 ease-in-out shadow-lg"
+        onMouseEnter={handleHeaderHover}
+      >
+        <div className="absolute inset-0 bg-gray-900/95 shadow-lg"></div>
         
-        {/* LEFT: Logo + Title */}
-        <div className="flex items-center space-x-3 md:space-x-5 transition-all duration-300">
-            {/* Logo Image */}
-            <div className={`${logoSize} rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-md transition-all duration-300 ease-in-out`}>
-               <img 
-                 src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf0c6sngPU7r12lHBOLDW_GTT3bNw5RGjkOFqtjm1U10pJuNRuAUZzIvU7OItNrvcPQcsktR-paApR49z4OKE9lC5YBwMliX_SQCOc4mOCtJTjqY-CVhW2YtqvMPnNRZPubUi-PUzomTJqLzNpntqiQNNIYeJ65wNeLXnwhd55obLyfCV0AT-I8vQl0ZI/w478-h478/Logo%20Tacklor%20AI.png" 
-                 alt="Tacklor Logo" 
-                 className="w-full h-full object-cover"
-               />
-            </div>
-
-            {/* Title - Clean & Solid */}
-            <div className="flex flex-col justify-center transition-all duration-300">
-                <h1 className={`${titleSize} font-bold font-sport uppercase text-white tracking-wide leading-none transition-all duration-300 origin-left`}>
-                  Tacklor Guide
-                </h1>
-                <div className={`transition-all duration-300 ease-in-out ${subtitleClass}`}>
-                  <p className="font-sans font-medium text-gray-400 tracking-widest whitespace-nowrap text-xs md:text-sm">
-                    OPTIMISEZ VOTRE APPROCHE
-                  </p>
-                </div>
-            </div>
+        {/* Fast Passing Tuna Animation */}
+        <div className="absolute top-1/2 left-0 w-full pointer-events-none z-0 overflow-hidden h-full">
+           <div 
+             className={`text-6xl absolute -left-20 transition-opacity duration-300 ${isTunaAnimating ? 'animate-tuna-pass opacity-100' : 'opacity-0'}`} 
+             style={{ top: '50%', transform: 'translateY(-50%)' }}
+             onAnimationEnd={handleTunaAnimationEnd}
+           >
+             🐟
+           </div>
         </div>
 
-        {/* RIGHT: Buttons Group */}
-        <div className="flex items-center space-x-3 transition-all duration-300">
-            {/* Info Button */}
-            <button 
-              onClick={onOpenInfo}
-              className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-300 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white`}
-              aria-label="Guide d'utilisation"
-            >
-              <span className={`${iconSize} font-serif font-bold italic transition-all duration-300`}>i</span>
-            </button>
+        <div className={`relative max-w-4xl mx-auto px-4 flex items-center justify-between z-10 transition-all duration-300 ease-in-out ${containerPadding}`}>
+          
+          {/* LEFT: Logo + Title */}
+          <div className="flex items-center space-x-3 md:space-x-5 transition-all duration-300">
+              {/* Logo Image */}
+              <div className={`${logoSize} rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-md transition-all duration-300 ease-in-out`}>
+                 <img 
+                   src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf0c6sngPU7r12lHBOLDW_GTT3bNw5RGjkOFqtjm1U10pJuNRuAUZzIvU7OItNrvcPQcsktR-paApR49z4OKE9lC5YBwMliX_SQCOc4mOCtJTjqY-CVhW2YtqvMPnNRZPubUi-PUzomTJqLzNpntqiQNNIYeJ65wNeLXnwhd55obLyfCV0AT-I8vQl0ZI/w478-h478/Logo%20Tacklor%20AI.png" 
+                   alt="Tacklor Logo" 
+                   className="w-full h-full object-cover"
+                 />
+              </div>
 
-            {/* Settings Button */}
-            <button 
-              onClick={onOpenSettings}
-              className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-300 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white group/btn`}
-              aria-label="Paramètres API"
-            >
-              <span className={`${iconSize} group-hover/btn:rotate-90 transition-all duration-300`}>⚙️</span>
-            </button>
+              {/* Title - Clean & Solid */}
+              <div className="flex flex-col justify-center transition-all duration-300">
+                  <h1 className={`${titleSize} font-bold font-sport uppercase text-white tracking-wide leading-none transition-all duration-300 origin-left`}>
+                    Tacklor Guide
+                  </h1>
+                  <div className={`transition-all duration-300 ease-in-out ${subtitleClass}`}>
+                    <p className="font-sans font-medium text-gray-400 tracking-widest whitespace-nowrap text-xs md:text-sm">
+                      OPTIMISEZ VOTRE APPROCHE
+                    </p>
+                  </div>
+              </div>
+          </div>
+
+          {/* RIGHT: Buttons Group */}
+          <div className="flex items-center space-x-3 transition-all duration-300">
+              {/* Info Button */}
+              <button 
+                onClick={onOpenInfo}
+                className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-300 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white`}
+                aria-label="Guide d'utilisation"
+              >
+                <span className={`${iconSize} font-serif font-bold italic transition-all duration-300`}>i</span>
+              </button>
+
+              {/* Settings Button */}
+              <button 
+                onClick={onOpenSettings}
+                className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-300 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white group/btn`}
+                aria-label="Paramètres API"
+              >
+                <span className={`${iconSize} group-hover/btn:rotate-90 transition-all duration-300`}>⚙️</span>
+              </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 };
 
