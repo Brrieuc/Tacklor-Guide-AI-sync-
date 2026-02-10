@@ -1,5 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react';
-import { SOLAR_TIMES } from '../constants';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface DynamicHeaderProps {
   time: number;
@@ -11,60 +10,28 @@ interface DynamicHeaderProps {
 
 const DynamicHeader: React.FC<DynamicHeaderProps> = ({ time, weather, month, onOpenSettings, onOpenInfo }) => {
 
-  const styleData = useMemo(() => {
-    const solar = SOLAR_TIMES[month] || { sunrise: 360, sunset: 1080 };
-    const { sunrise, sunset } = solar;
-    
-    // Determine Phase based on dynamic solar times
-    let phase: 'night' | 'dawn' | 'day' | 'dusk' = 'night';
-    
-    if (time >= sunrise - 60 && time < sunrise) phase = 'dawn';
-    else if (time >= sunrise && time < sunset - 60) phase = 'day';
-    else if (time >= sunset - 60 && time < sunset + 60) phase = 'dusk';
+  // --- SCROLL LOGIC ---
+  const [isCompact, setIsCompact] = useState(false);
 
-    // --- GLOW INTENSITY LOGIC ---
-    const noon = sunrise + (sunset - sunrise) / 2;
-    const maxDist = (sunset - sunrise) / 2;
-    const currentDist = Math.abs(time - noon);
-    
-    let intensityFactor = 0.5;
-    if (phase !== 'night') {
-        intensityFactor = Math.min(Math.max(currentDist / maxDist, 0.2), 1);
-    } else {
-        intensityFactor = 0.8;
-    }
-
-    // Palettes (Used for accent and ambient glow)
-    const palettes = {
-      night: { shadowColor: 'rgba(56, 189, 248, 0.5)', accent: '#38bdf8' },
-      dawn:  { shadowColor: 'rgba(251, 146, 60, 0.6)',  accent: '#f97316' },
-      day:   { shadowColor: 'rgba(6, 182, 212, 0.4)',   accent: '#06b6d4' },
-      dusk:  { shadowColor: 'rgba(232, 121, 249, 0.6)', accent: '#db2777' }
+  useEffect(() => {
+    const handleScroll = () => {
+      // Direct switch: If we are not at the very top (> 10px), compact mode is ON.
+      // No hiding, no intermediate states.
+      setIsCompact(window.scrollY > 10);
     };
 
-    return palettes[phase];
-  }, [time, month]);
+    window.addEventListener('scroll', handleScroll);
+    // Initial check in case page is reloaded halfway down
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // Simplified Title Style (No Blur, No Transparency)
-  const titleStyle = useMemo(() => {
-    return {
-      color: '#ffffff',
-      // Subtle colored shadow adapting to the time of day (luminosity/ambiance)
-      textShadow: `0 4px 12px ${styleData.shadowColor}`,
-      letterSpacing: '0.05em',
-      transition: 'text-shadow 1s ease, color 1s ease'
-    };
-  }, [styleData]);
-
-  const titleChars = "Tacklor Guide".split("");
-
-  // --- TUNA ANIMATION LOGIC ---
+  // --- TUNA ANIMATION LOGIC (Background decoration only) ---
   const [isTunaAnimating, setIsTunaAnimating] = useState(false);
   const lastTunaTime = useRef<number>(0);
 
   const handleHeaderHover = () => {
     const now = Date.now();
-    // Allow animation if not currently running AND at least 60 seconds (60000ms) have passed since last start
     if (!isTunaAnimating && (now - lastTunaTime.current > 60000)) {
       setIsTunaAnimating(true);
       lastTunaTime.current = now;
@@ -75,77 +42,82 @@ const DynamicHeader: React.FC<DynamicHeaderProps> = ({ time, weather, month, onO
     setIsTunaAnimating(false);
   };
 
+  // Dimensions based on Compact state
+  // Using longer durations (duration-500) for smooth resizing
+  const containerPadding = isCompact ? "py-2" : "py-6 md:py-8";
+  const logoSize = isCompact ? "w-10 h-10" : "w-16 h-16 md:w-20 md:h-20";
+  const titleSize = isCompact ? "text-lg md:text-xl" : "text-3xl md:text-4xl";
+  
+  // Subtitle: We animate height and opacity to remove it from flow smoothly
+  const subtitleClass = isCompact ? "h-0 opacity-0 overflow-hidden" : "h-auto opacity-100 mt-1"; 
+  
+  const buttonSize = isCompact ? "w-9 h-9" : "w-12 h-12";
+  const iconSize = isCompact ? "text-base" : "text-xl";
+
   return (
     <header 
-      className="sticky top-0 z-50 transition-all duration-700 overflow-hidden group"
+      className="sticky top-0 z-50 group border-b border-gray-800 transition-all duration-500 ease-in-out shadow-lg"
       onMouseEnter={handleHeaderHover}
     >
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-md border-b border-white/10 shadow-lg"></div>
+      <div className="absolute inset-0 bg-gray-900/95 shadow-lg"></div>
       
       {/* Fast Passing Tuna Animation */}
-      <div className="absolute top-1/2 left-0 w-full pointer-events-none z-0">
+      <div className="absolute top-1/2 left-0 w-full pointer-events-none z-0 overflow-hidden h-full">
          <div 
            className={`text-6xl absolute -left-20 transition-opacity duration-300 ${isTunaAnimating ? 'animate-tuna-pass opacity-100' : 'opacity-0'}`} 
-           style={{ top: '-1rem' }}
+           style={{ top: '50%', transform: 'translateY(-50%)' }}
            onAnimationEnd={handleTunaAnimationEnd}
          >
            🐟
          </div>
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 py-4 flex items-center justify-between z-10">
+      <div className={`relative max-w-4xl mx-auto px-4 flex items-center justify-between z-10 transition-all duration-500 ease-in-out ${containerPadding}`}>
         
-        {/* Info Button (Left) */}
-        <button 
-          onClick={onOpenInfo}
-          className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/10 group/info"
-          aria-label="Guide d'utilisation"
-        >
-          <span className="text-lg md:text-xl font-serif font-bold italic group-hover/info:scale-110 transition-transform duration-300">i</span>
-        </button>
+        {/* LEFT: Logo + Title */}
+        <div className="flex items-center space-x-3 md:space-x-5 transition-all duration-500">
+            {/* Logo Image */}
+            <div className={`${logoSize} rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-md transition-all duration-500 ease-in-out`}>
+               <img 
+                 src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf0c6sngPU7r12lHBOLDW_GTT3bNw5RGjkOFqtjm1U10pJuNRuAUZzIvU7OItNrvcPQcsktR-paApR49z4OKE9lC5YBwMliX_SQCOc4mOCtJTjqY-CVhW2YtqvMPnNRZPubUi-PUzomTJqLzNpntqiQNNIYeJ65wNeLXnwhd55obLyfCV0AT-I8vQl0ZI/w478-h478/Logo%20Tacklor%20AI.png" 
+                 alt="Tacklor Logo" 
+                 className="w-full h-full object-cover"
+               />
+            </div>
 
-        {/* Title */}
-        <div className="text-center cursor-default select-none">
-          <h1 
-            className="flex justify-center text-3xl md:text-5xl font-bold font-sport uppercase"
-          >
-            {titleChars.map((char, index) => (
-              <span
-                key={index}
-                className="inline-block transition-transform duration-300 group-hover:animate-wave"
-                style={{
-                  ...titleStyle,
-                  animationDelay: `${index * 0.05}s`
-                }}
-              >
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
-          </h1>
-
-          <div className="flex justify-center items-center mt-3 space-x-2 opacity-80">
-             <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-white/50"></div>
-             <p 
-               className="text-xs md:text-sm font-light tracking-[0.2em] font-sans uppercase transition-colors duration-700"
-               style={{ 
-                 color: styleData.accent,
-                 textShadow: `0 0 10px ${styleData.shadowColor}`,
-               }}
-             >
-               Optimisez votre approche
-             </p>
-             <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-white/50"></div>
-          </div>
+            {/* Title - Clean & Solid */}
+            <div className="flex flex-col justify-center transition-all duration-500">
+                <h1 className={`${titleSize} font-bold font-sport uppercase text-white tracking-wide leading-none transition-all duration-500 origin-left`}>
+                  Tacklor Guide
+                </h1>
+                <div className={`transition-all duration-500 ease-in-out ${subtitleClass}`}>
+                  <p className="font-sans font-medium text-gray-400 tracking-widest whitespace-nowrap text-xs md:text-sm">
+                    OPTIMISEZ VOTRE APPROCHE
+                  </p>
+                </div>
+            </div>
         </div>
 
-        {/* Settings Button (Right) */}
-        <button 
-          onClick={onOpenSettings}
-          className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/10 group/btn"
-          aria-label="Paramètres API"
-        >
-          <span className="text-lg md:text-xl group-hover/btn:rotate-45 transition-transform duration-500">⚙️</span>
-        </button>
+        {/* RIGHT: Buttons Group */}
+        <div className="flex items-center space-x-3 transition-all duration-500">
+            {/* Info Button */}
+            <button 
+              onClick={onOpenInfo}
+              className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-500 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white`}
+              aria-label="Guide d'utilisation"
+            >
+              <span className={`${iconSize} font-serif font-bold italic transition-all duration-500`}>i</span>
+            </button>
+
+            {/* Settings Button */}
+            <button 
+              onClick={onOpenSettings}
+              className={`${buttonSize} rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-all duration-500 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white group/btn`}
+              aria-label="Paramètres API"
+            >
+              <span className={`${iconSize} group-hover/btn:rotate-90 transition-all duration-500`}>⚙️</span>
+            </button>
+        </div>
       </div>
     </header>
   );
