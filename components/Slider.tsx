@@ -29,7 +29,7 @@ const Slider: React.FC<SliderProps> = ({
   tooltip
 }) => {
   return (
-    <div className="flex flex-col space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
+    <div className="flex flex-col space-y-2 bg-gray-800/50 p-3 md:p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
       <div className="flex justify-between items-center mb-1">
         <label className="text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center">
           {label}
@@ -38,8 +38,17 @@ const Slider: React.FC<SliderProps> = ({
         <span className="text-emerald-400 font-bold font-mono bg-gray-900 px-2 py-1 rounded text-sm">{valueLabel}</span>
       </div>
       
-      <div className="relative flex items-center space-x-3">
-        {leftIcon && <span className="text-xl opacity-70">{leftIcon}</span>}
+      {/* Mobile Icons Row (Above Slider) */}
+      {(leftIcon || rightIcon) && (
+        <div className="flex justify-between items-center px-1 pb-1 sm:hidden">
+            <span className="text-xl opacity-70">{leftIcon}</span>
+            <span className="text-xl opacity-70">{rightIcon}</span>
+        </div>
+      )}
+      
+      <div className="relative flex items-center sm:space-x-3">
+        {/* Desktop Left Icon */}
+        {leftIcon && <span className="hidden sm:block text-xl opacity-70">{leftIcon}</span>}
         
         <input
           type="range"
@@ -51,7 +60,8 @@ const Slider: React.FC<SliderProps> = ({
           className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500 hover:accent-emerald-400 transition-all"
         />
         
-        {rightIcon && <span className="text-xl opacity-70">{rightIcon}</span>}
+        {/* Desktop Right Icon */}
+        {rightIcon && <span className="hidden sm:block text-xl opacity-70">{rightIcon}</span>}
       </div>
       
       {/* Scale Labels */}

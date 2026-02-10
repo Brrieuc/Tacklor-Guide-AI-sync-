@@ -31,7 +31,7 @@ const TimeSlider: React.FC<TimeSliderProps> = ({
   const noonPercent = 50;
 
   return (
-    <div className="flex flex-col space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
+    <div className="flex flex-col space-y-2 bg-gray-800/50 p-3 md:p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
       <div className="flex justify-between items-center mb-1">
         <label className="text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center">
           {label}

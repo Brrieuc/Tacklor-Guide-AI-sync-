@@ -83,7 +83,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
   };
 
   return (
-    <div className="flex flex-col space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
+    <div className="flex flex-col space-y-2 bg-gray-800/50 p-3 md:p-4 rounded-xl border border-gray-700 backdrop-blur-sm">
       <div className="flex justify-between items-center mb-4">
         <label className="text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
           {label}
@@ -94,8 +94,16 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
         </span>
       </div>
 
-      <div className="flex items-center space-x-4 px-2">
-        {leftIcon && <span className="text-xl opacity-70 flex-shrink-0">{leftIcon}</span>}
+      {/* Mobile Icons Row (Above Slider) */}
+      {(leftIcon || rightIcon) && (
+        <div className="flex justify-between items-center px-2 pb-2 sm:hidden">
+            <span className="text-xl opacity-70">{leftIcon}</span>
+            <span className="text-xl opacity-70">{rightIcon}</span>
+        </div>
+      )}
+
+      <div className="flex items-center sm:space-x-4 px-2">
+        {leftIcon && <span className="hidden sm:block text-xl opacity-70 flex-shrink-0">{leftIcon}</span>}
         
         <div className="relative flex-grow h-6">
           {/* Inputs */}
@@ -126,7 +134,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
           ></div>
         </div>
 
-        {rightIcon && <span className="text-xl opacity-70 flex-shrink-0">{rightIcon}</span>}
+        {rightIcon && <span className="hidden sm:block text-xl opacity-70 flex-shrink-0">{rightIcon}</span>}
       </div>
 
       <style>{`

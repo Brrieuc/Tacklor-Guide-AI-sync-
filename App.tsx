@@ -362,7 +362,7 @@ const App: React.FC = () => {
         </div>
         
         {/* Environmental Conditions Section */}
-        <section className="bg-gray-900/60 p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
+        <section className="bg-gray-900/60 p-4 md:p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
           <h2 className="text-xl font-semibold text-emerald-400 mb-6 flex items-center font-sport tracking-wide text-shadow-sm">
             <span className="bg-emerald-900/50 p-2 rounded-lg mr-3">🌤️</span> 
             CONDITIONS MÉTÉO
@@ -392,7 +392,7 @@ const App: React.FC = () => {
                />
             </div>
 
-            <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm flex flex-col space-y-2">
+            <div className="bg-gray-800/50 p-3 md:p-4 rounded-xl border border-gray-700 backdrop-blur-sm flex flex-col space-y-2">
                <label className="text-sm font-semibold text-gray-300 uppercase tracking-wider flex justify-between items-center">
                  <div className="flex items-center">
                     <span>Période de l'année</span>
@@ -452,7 +452,7 @@ const App: React.FC = () => {
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Water Type */}
-          <div className="bg-gray-900/60 p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
+          <div className="bg-gray-900/60 p-4 md:p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
              <h2 className="text-lg font-semibold text-cyan-400 mb-4 flex items-center font-sport tracking-wide text-shadow-sm">
               <span className="bg-cyan-900/50 p-2 rounded-lg mr-3">🗺️</span> 
               PLAN D'EAU
@@ -510,7 +510,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Bottom Type */}
-          <div className="bg-gray-900/60 p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
+          <div className="bg-gray-900/60 p-4 md:p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
             <h2 className="text-lg font-semibold text-amber-400 mb-4 flex items-center font-sport tracking-wide text-shadow-sm">
               <span className="bg-amber-900/50 p-2 rounded-lg mr-3">🌱</span> 
               TYPE DE FOND
@@ -535,7 +535,7 @@ const App: React.FC = () => {
         <section className="bg-gray-900/60 rounded-2xl border border-gray-700/50 shadow-xl overflow-hidden transition-all duration-300 backdrop-blur-md">
            <button 
              onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-             className="w-full flex items-center justify-between p-6 bg-gray-800/40 hover:bg-gray-800/60 transition-colors"
+             className="w-full flex items-center justify-between p-4 md:p-6 bg-gray-800/40 hover:bg-gray-800/60 transition-colors"
            >
               <div className="flex items-center">
                 <span className="bg-gray-700 p-2 rounded-lg mr-3 text-xl">⚙️</span>
@@ -550,7 +550,7 @@ const App: React.FC = () => {
            
            <div className={`
              transition-all duration-500 ease-in-out overflow-hidden
-             ${isAdvancedOpen ? 'max-h-[1000px] opacity-100 p-6 pt-0' : 'max-h-0 opacity-0 p-0'}
+             ${isAdvancedOpen ? 'max-h-[1000px] opacity-100 p-4 md:p-6 pt-0' : 'max-h-0 opacity-0 p-0'}
            `}>
              <div className="space-y-6 pt-4 border-t border-gray-700/50">
                
@@ -635,7 +635,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Target Fish Section - Dropdown Select */}
-        <section className="bg-gray-900/60 p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
+        <section className="bg-gray-900/60 p-4 md:p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
              <div className="flex items-center">
                 <span className="bg-rose-900/50 p-3 rounded-lg mr-4 text-2xl">🎯</span>
@@ -690,7 +690,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Technique */}
-        <section className="bg-gray-900/60 p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
+        <section className="bg-gray-900/60 p-4 md:p-6 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-md">
            <h2 className="text-xl font-semibold text-purple-400 mb-6 flex items-center font-sport tracking-wide text-shadow-sm">
             <span className="bg-purple-900/50 p-2 rounded-lg mr-3">🎣</span> 
             TECHNIQUE

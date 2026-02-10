@@ -8,7 +8,7 @@ interface TideSliderProps {
 
 const TideSlider: React.FC<TideSliderProps> = ({ value, onChange }) => {
   return (
-    <div className="flex flex-col space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-700 backdrop-blur-sm relative overflow-hidden">
+    <div className="flex flex-col space-y-2 bg-gray-800/50 p-3 md:p-4 rounded-xl border border-gray-700 backdrop-blur-sm relative overflow-hidden">
       <div className="flex justify-between items-center mb-1 z-10 relative">
         <label className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Niveau de marée</label>
         <span className="text-cyan-400 font-bold font-mono bg-gray-900 px-2 py-1 rounded text-sm">{getTideLabel(value)}</span>
